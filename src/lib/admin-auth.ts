@@ -24,15 +24,24 @@ export async function checkAdminAuth() {
     const { data: { user }, error } = await supabase.auth.getUser();
 
     if (error || !user) {
+        console.log('[Auth] No user found:', error?.message);
         return { authenticated: false, user: null };
     }
 
     // Optional: Check if user email matches admin email
-    const adminEmail = process.env.ADMIN_EMAIL || 'hello@asrulbasri.com';
-    if (user.email !== adminEmail) {
+    const adminEmail = process.env.ADMIN_EMAIL || 'asrulbasri@gmail.com';
+    const userEmail = user.email?.toLowerCase();
+    const expectedEmail = adminEmail.toLowerCase();
+
+    console.log('[Auth] User email:', userEmail);
+    console.log('[Auth] Expected email:', expectedEmail);
+
+    if (userEmail !== expectedEmail) {
+        console.log('[Auth] Email mismatch - access denied');
         return { authenticated: false, user: null };
     }
 
+    console.log('[Auth] Authentication successful');
     return { authenticated: true, user };
 }
 
