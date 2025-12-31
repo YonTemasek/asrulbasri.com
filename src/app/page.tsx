@@ -79,7 +79,7 @@ export default function HomePage() {
       </section>
 
       {/* Animated Filtering Ticker */}
-      <section className="py-8 bg-slate-900 overflow-hidden">
+      <section className="py-16 bg-slate-900 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-6">
           <SectionLabel text="Clarity" light />
           <h2 className="text-3xl text-white font-bold">This Is Not For Everyone</h2>
