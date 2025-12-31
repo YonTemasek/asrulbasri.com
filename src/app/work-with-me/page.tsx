@@ -65,9 +65,9 @@ export default function WorkWithMePage() {
                 {/* Header */}
                 <div className="mb-16">
                     <SectionLabel text="Work Together" />
-                    <h1 className="text-4xl md:text-6xl font-bold mb-4">Let's Get Started.</h1>
+                    <h1 className="text-4xl md:text-6xl font-bold mb-4">Decision Review Session</h1>
                     <p className="text-xl text-slate-600 max-w-2xl">
-                        I can help you build these systems in your own life or business. Choose an option below.
+                        A private 1-on-1 session to close decisions that keep work unfinished. <span className="italic">Not a class. Not coaching. Not consulting.</span>
                     </p>
                 </div>
 
@@ -131,7 +131,7 @@ export default function WorkWithMePage() {
                                     </ul>
                                     <Link href={`/book/${service.id}`}>
                                         <Button primary={service.is_featured} className="w-full justify-center">
-                                            Book Now
+                                            Book a Decision Review Session
                                         </Button>
                                     </Link>
                                 </div>

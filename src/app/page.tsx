@@ -53,13 +53,13 @@ export default function HomePage() {
               SYSTEM BUILDER
             </div>
             <h1 className="text-5xl md:text-8xl font-bold text-slate-900 tracking-tight leading-[1] mb-8">
-              Turning Ideas <br />
+              Turning Decisions <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-400 to-slate-200">
                 Into Action.
               </span>
             </h1>
             <p className="text-xl text-slate-600 leading-relaxed mb-10 max-w-lg">
-              I help businesses and individuals organize their work, use simple tools, and get clear on their direction. Less stress, more results.
+              I work with people who have learned a lot — but are still stuck making decisions and closing work.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/articles">
@@ -68,7 +68,7 @@ export default function HomePage() {
                 </Button>
               </Link>
               <Link href="/work-with-me">
-                <Button>Work With Me</Button>
+                <Button>Decision Review Session</Button>
               </Link>
             </div>
           </div>
@@ -82,16 +82,16 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-4xl font-bold mb-6 leading-tight">
-                Simplify Your <br />Work.
+                How I <br />Work.
               </h2>
               <p className="text-slate-600 leading-relaxed mb-8 text-lg">
-                The world is noisy enough. You don't need complicated plans; you need a clear way to move forward. I help you design simple workflows that actually work in real life—so you can stop worrying and start doing.
+                I help you close decisions that keep work unfinished. Not by giving you more frameworks, but by removing what's blocking you from moving forward.
               </p>
               <div className="grid gap-4">
                 {[
-                  { title: "Business Systems", desc: "Making your business run smoothly without you constantly watching it." },
-                  { title: "Digital Tools", desc: "Setting up the right apps to save you time, not waste it." },
-                  { title: "Clear Thinking", desc: "Simple ways to make better decisions faster." },
+                  { title: "Decision Clarity", desc: "Identifying what truly needs to be decided" },
+                  { title: "Closure", desc: "Removing options that delay action" },
+                  { title: "Execution Focus", desc: "Finishing what has been left open" },
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4 items-start p-4 bg-slate-50 border border-slate-100 rounded-2xl">
                     <CheckCircle className="text-emerald-500 shrink-0 mt-1" size={20} />
@@ -175,9 +175,12 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 grid md:grid-cols-2 gap-16 items-center relative z-10">
           <div>
             <SectionLabel text="My Resources" light />
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">Tools that actually help.</h2>
-            <p className="text-slate-400 mb-8 leading-relaxed text-lg">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Tools I Use — Not What I Sell</h2>
+            <p className="text-slate-400 mb-2 leading-relaxed text-lg">
               I don't just talk about tools; I use them every day. Here are the simple templates and guides I use to keep my life and business organized.
+            </p>
+            <p className="text-slate-500 text-sm mb-8 italic">
+              Tools support decisions. They are not the solution.
             </p>
             <Link href="/library">
               <Button className="bg-emerald-500 text-white border-none hover:bg-emerald-400">
@@ -205,6 +208,31 @@ export default function HomePage() {
               <Briefcase className="text-emerald-400 mb-4" size={32} />
               <div className="font-bold text-lg">Travel & Life</div>
               <div className="text-sm text-slate-400 mt-2">Planning Checklists</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Filtering Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-3xl mx-auto px-6 lg:px-8 text-center">
+          <SectionLabel text="Clarity" />
+          <h2 className="text-4xl font-bold mb-8">This Is Not For Everyone</h2>
+          <div className="text-left space-y-4 bg-slate-50 border border-slate-200 rounded-2xl p-8">
+            <p className="text-slate-600 mb-6">This is not for you if:</p>
+            <div className="space-y-4">
+              <div className="flex gap-3 items-start">
+                <div className="w-1.5 h-1.5 bg-slate-400 rounded-full mt-2 shrink-0"></div>
+                <p className="text-slate-700">You are looking for frameworks or templates</p>
+              </div>
+              <div className="flex gap-3 items-start">
+                <div className="w-1.5 h-1.5 bg-slate-400 rounded-full mt-2 shrink-0"></div>
+                <p className="text-slate-700">You want someone to decide for you</p>
+              </div>
+              <div className="flex gap-3 items-start">
+                <div className="w-1.5 h-1.5 bg-slate-400 rounded-full mt-2 shrink-0"></div>
+                <p className="text-slate-700">You are still collecting information instead of acting</p>
+              </div>
             </div>
           </div>
         </div>
