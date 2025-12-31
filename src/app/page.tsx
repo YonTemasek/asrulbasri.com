@@ -71,6 +71,9 @@ export default function HomePage() {
                 <Button>Decision Review Session</Button>
               </Link>
             </div>
+            <p className="text-sm text-slate-500 italic mt-4">
+              For people ready to close decisions, not explore more ideas.
+            </p>
           </div>
         </div>
       </section>

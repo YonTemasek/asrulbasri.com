@@ -42,7 +42,7 @@ export function Footer() {
                         <BrandLogo dark align="start" />
                     </Link>
                     <p className="max-w-sm mb-6">
-                        Execution over theory. Helping you build systems, leverage tools, and master the operator mindset.
+                        Execution over theory. Helping you close decisions and finish what stays open too long.
                     </p>
                     <div className="flex gap-4">
                         <a href={twitterUrl} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
