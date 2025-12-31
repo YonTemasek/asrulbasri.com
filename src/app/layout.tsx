@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
   verification: {
-    google: "your-google-verification-code",
+    google: "3VyWGE108JN_HOcouGrS10nfw-Pj4JKr-0JRNxX7Ijc",
   },
   alternates: {
     canonical: "https://asrulbasri.com",
