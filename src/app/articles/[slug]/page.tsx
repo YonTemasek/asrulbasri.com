@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Comments } from '@/components/Comments';
+import { ContentProtection } from '@/components/ContentProtection';
 
 // Dynamic metadata for SEO
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -155,106 +156,112 @@ export default async function FrameworkPostPage({ params }: { params: Promise<{ 
 
                 {/* Content */}
                 <div className="max-w-3xl mx-auto px-6 pb-24">
-                    <style dangerouslySetInnerHTML={{
-                        __html: `
-                        .blog-content p {
-                            font-size: 1.25rem;
-                            line-height: 1.9;
-                            margin-bottom: 1.75rem;
-                            color: #1a1a1a;
-                        }
-                        .blog-content h1 {
-                            font-size: 2.5rem;
-                            font-weight: 700;
-                            margin-top: 2.5rem;
-                            margin-bottom: 1rem;
-                            line-height: 1.2;
-                            color: #0a0a0a;
-                        }
-                        .blog-content h2 {
-                            font-size: 1.875rem;
-                            font-weight: 700;
-                            margin-top: 2.5rem;
-                            margin-bottom: 1rem;
-                            line-height: 1.3;
-                            color: #0a0a0a;
-                        }
-                        .blog-content h3 {
-                            font-size: 1.5rem;
-                            font-weight: 600;
-                            margin-top: 2rem;
-                            margin-bottom: 0.75rem;
-                            color: #0a0a0a;
-                        }
-                        .blog-content ul, .blog-content ol {
-                            margin: 1.5rem 0;
-                            padding-left: 2rem;
-                        }
-                        .blog-content li {
-                            font-size: 1.25rem;
-                            line-height: 1.9;
-                            margin-bottom: 0.75rem;
-                            color: #1a1a1a;
-                        }
-                        .blog-content blockquote {
-                            border-left: 4px solid #10b981;
-                            padding-left: 1.5rem;
-                            margin: 2rem 0;
-                            font-style: italic;
-                            color: #4a5568;
-                        }
-                        .blog-content a {
-                            color: #10b981;
-                            text-decoration: underline;
-                        }
-                        .blog-content code {
-                            background: #f1f5f9;
-                            padding: 0.25rem 0.5rem;
-                            border-radius: 4px;
-                            font-size: 0.9em;
-                        }
-                        .blog-content img {
-                            border-radius: 12px;
-                            margin: 2rem 0;
-                            max-width: 100%;
-                        }
-                    `}} />
-                    <div
-                        className="blog-content"
-                        style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
-                        dangerouslySetInnerHTML={{ __html: getCleanContent(post.content || '', post.image_url) }}
-                    />
+                    <ContentProtection
+                        enableRightClickBlock={true}
+                        enableTextSelectionBlock={false}
+                        showCopyrightNotice={true}
+                    >
+                        <style dangerouslySetInnerHTML={{
+                            __html: `
+                            .blog-content p {
+                                font-size: 1.25rem;
+                                line-height: 1.9;
+                                margin-bottom: 1.75rem;
+                                color: #1a1a1a;
+                            }
+                            .blog-content h1 {
+                                font-size: 2.5rem;
+                                font-weight: 700;
+                                margin-top: 2.5rem;
+                                margin-bottom: 1rem;
+                                line-height: 1.2;
+                                color: #0a0a0a;
+                            }
+                            .blog-content h2 {
+                                font-size: 1.875rem;
+                                font-weight: 700;
+                                margin-top: 2.5rem;
+                                margin-bottom: 1rem;
+                                line-height: 1.3;
+                                color: #0a0a0a;
+                            }
+                            .blog-content h3 {
+                                font-size: 1.5rem;
+                                font-weight: 600;
+                                margin-top: 2rem;
+                                margin-bottom: 0.75rem;
+                                color: #0a0a0a;
+                            }
+                            .blog-content ul, .blog-content ol {
+                                margin: 1.5rem 0;
+                                padding-left: 2rem;
+                            }
+                            .blog-content li {
+                                font-size: 1.25rem;
+                                line-height: 1.9;
+                                margin-bottom: 0.75rem;
+                                color: #1a1a1a;
+                            }
+                            .blog-content blockquote {
+                                border-left: 4px solid #10b981;
+                                padding-left: 1.5rem;
+                                margin: 2rem 0;
+                                font-style: italic;
+                                color: #4a5568;
+                            }
+                            .blog-content a {
+                                color: #10b981;
+                                text-decoration: underline;
+                            }
+                            .blog-content code {
+                                background: #f1f5f9;
+                                padding: 0.25rem 0.5rem;
+                                border-radius: 4px;
+                                font-size: 0.9em;
+                            }
+                            .blog-content img {
+                                border-radius: 12px;
+                                margin: 2rem 0;
+                                max-width: 100%;
+                            }
+                        `}} />
+                        <div
+                            className="blog-content"
+                            style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
+                            dangerouslySetInnerHTML={{ __html: getCleanContent(post.content || '', post.image_url) }}
+                        />
 
-                    {/* Tags */}
-                    {post.tags && (
+                        {/* Tags */}
+                        {post.tags && (
+                            <div className="mt-12 pt-8 border-t border-slate-200">
+                                <div className="flex flex-wrap gap-2">
+                                    {post.tags.split(',').map((tag: string) => (
+                                        <span
+                                            key={tag.trim()}
+                                            className="px-3 py-1 bg-slate-100 text-slate-600 text-sm rounded-full"
+                                        >
+                                            #{tag.trim()}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Author Bio */}
                         <div className="mt-12 pt-8 border-t border-slate-200">
-                            <div className="flex flex-wrap gap-2">
-                                {post.tags.split(',').map((tag: string) => (
-                                    <span
-                                        key={tag.trim()}
-                                        className="px-3 py-1 bg-slate-100 text-slate-600 text-sm rounded-full"
-                                    >
-                                        #{tag.trim()}
-                                    </span>
-                                ))}
+                            <div className="flex items-start gap-4">
+                                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold text-xl">
+                                    AB
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-slate-900">Written by Asrul Basri</h3>
+                                    <p className="text-slate-600 text-sm mt-1">
+                                        System Builder. Helping businesses scale with better operations and technology.
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    )}
-
-                    {/* Author Bio */}
-                    <div className="mt-12 pt-8 border-t border-slate-200">
-                        <div className="flex items-start gap-4">
-                            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 font-bold text-xl">
-                                AB
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-slate-900">Written by Asrul Basri</h3>
-                                <p className="text-slate-600 text-sm mt-1">
-                                    System Builder. Helping businesses scale with better operations and technology.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                    </ContentProtection>
 
                     {/* Comments Section */}
                     <Comments postId={post.id} />

@@ -65,6 +65,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://asrulbasri.com",
   },
+  other: {
+    'copyright': '© 2025 Asrul Basri. All rights reserved.',
+    'author': 'Asrul Basri',
+    'revisit-after': '7 days',
+  },
 };
 
 export default function RootLayout({
