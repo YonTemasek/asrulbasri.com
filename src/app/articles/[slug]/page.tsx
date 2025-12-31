@@ -158,7 +158,7 @@ export default async function FrameworkPostPage({ params }: { params: Promise<{ 
                 <div className="max-w-3xl mx-auto px-6 pb-24">
                     <ContentProtection
                         enableRightClickBlock={true}
-                        enableTextSelectionBlock={false}
+                        enableTextSelectionBlock={true}
                         showCopyrightNotice={true}
                     >
                         <style dangerouslySetInnerHTML={{
