@@ -104,7 +104,7 @@ export default function WorkWithMePage() {
                                     </div>
                                     <p
                                         className="text-sm text-slate-600 mb-6 line-clamp-3"
-                                        title={service.description}
+                                        title={service.description || ''}
                                     >
                                         {service.description}
                                     </p>
