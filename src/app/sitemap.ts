@@ -61,23 +61,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Dynamic articles from Supabase
     let articlePages: MetadataRoute.Sitemap = []
-    try {
-        const supabase = createClient(supabaseUrl, supabaseKey)
-        const { data: articles } = await supabase
-            .from('ab_blog_posts')
-            .select('slug, updated_at')
-            .eq('is_published', true)
 
-        if (articles) {
-            articlePages = articles.map((article) => ({
-                url: `${baseUrl}/articles/${article.slug}`,
-                lastModified: new Date(article.updated_at),
-                changeFrequency: 'weekly' as const,
-                priority: 0.7,
-            }))
+    // Only attempt to fetch if env vars are present
+    if (supabaseUrl && supabaseKey) {
+        try {
+            const supabase = createClient(supabaseUrl, supabaseKey)
+            // Use 'status' instead of 'is_published' which might not exist
+            const { data: articles } = await supabase
+                .from('ab_blog_posts')
+                .select('slug, updated_at')
+                .eq('status', 'Published')
+
+            if (articles) {
+                articlePages = articles.map((article) => ({
+                    url: `${baseUrl}/articles/${article.slug}`,
+                    lastModified: new Date(article.updated_at),
+                    changeFrequency: 'weekly' as const,
+                    priority: 0.7,
+                }))
+            }
+        } catch (error) {
+            console.error('Error fetching articles for sitemap:', error)
+            // Continue without articles, do not crash
         }
-    } catch (error) {
-        console.error('Error fetching articles for sitemap:', error)
     }
 
     return [...staticPages, ...articlePages]
