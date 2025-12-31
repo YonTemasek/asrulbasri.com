@@ -1,9 +1,12 @@
--- Fix RLS Policies for Security
--- This migration tightens security on tables that should be admin-only
+-- Enable RLS and Fix Security Policies
+-- This migration enables Row Level Security and applies proper policies
 
 -- ============================================
--- 1. ab_admin_users - CRITICAL: Should be fully restricted
+-- 1. ab_admin_users - ENABLE RLS + Restrict
 -- ============================================
+
+-- Enable RLS
+ALTER TABLE public.ab_admin_users ENABLE ROW LEVEL SECURITY;
 
 -- Drop ALL existing policies
 DO $$ 
@@ -24,8 +27,11 @@ USING (true)
 WITH CHECK (true);
 
 -- ============================================
--- 2. ab_bookings - Should be admin-only via API
+-- 2. ab_bookings - ENABLE RLS + Restrict
 -- ============================================
+
+-- Enable RLS
+ALTER TABLE public.ab_bookings ENABLE ROW LEVEL SECURITY;
 
 -- Drop ALL existing policies
 DO $$ 
@@ -46,8 +52,11 @@ USING (true)
 WITH CHECK (true);
 
 -- ============================================
--- 3. ab_download_requests - Should be admin-only
+-- 3. ab_download_requests - ENABLE RLS + Restrict
 -- ============================================
+
+-- Enable RLS
+ALTER TABLE public.ab_download_requests ENABLE ROW LEVEL SECURITY;
 
 -- Drop ALL existing policies
 DO $$ 
@@ -66,12 +75,3 @@ FOR ALL
 TO service_role
 USING (true)
 WITH CHECK (true);
-
--- ============================================
--- VERIFICATION
--- ============================================
--- After running this migration:
--- 1. All three tables should show as "RESTRICTED" in Supabase dashboard
--- 2. Public users cannot directly access these tables
--- 3. Only your API routes (using service_role key) can access them
--- 4. This is the correct security model for your application

@@ -133,6 +133,7 @@ export default function ServiceForm({ serviceId }: ServiceFormProps) {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form),
+                credentials: 'include', // Ensure cookies are sent
             });
 
             if (res.ok) {
