@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { CheckCircle, MessageSquare, Users, Briefcase, Layers, PenTool, Cpu } from 'lucide-react';
+import { CheckCircle, MessageSquare, Users, Briefcase, Layers, PenTool, Cpu, Info } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { SectionLabel } from '@/components/ui/SectionLabel';
@@ -102,12 +102,25 @@ export default function WorkWithMePage() {
                                         {service.price_label}
                                         <span className="text-sm font-normal text-slate-400">{service.period}</span>
                                     </div>
-                                    <p
-                                        className="text-sm text-slate-600 mb-6 line-clamp-3"
-                                        title={service.description || ''}
-                                    >
-                                        {service.description}
-                                    </p>
+                                    <div className="mb-6 flex items-start gap-2">
+                                        <p className="text-sm text-slate-600 line-clamp-3 flex-1">
+                                            {service.description}
+                                        </p>
+                                        <div className="group relative">
+                                            <Info
+                                                size={16}
+                                                className="text-slate-400 hover:text-slate-600 cursor-help shrink-0 mt-0.5"
+                                            />
+                                            <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block z-10 w-64">
+                                                <div className="bg-slate-900 text-white text-xs rounded-lg p-3 shadow-lg">
+                                                    {service.description}
+                                                    <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1">
+                                                        <div className="border-4 border-transparent border-t-slate-900"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <ul className="text-sm text-slate-600 space-y-4 mb-8 flex-1">
                                         {(service.features || []).map((feature, i) => (
                                             <li key={i} className="flex gap-3">
