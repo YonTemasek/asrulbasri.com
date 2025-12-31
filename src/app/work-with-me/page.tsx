@@ -102,7 +102,12 @@ export default function WorkWithMePage() {
                                         {service.price_label}
                                         <span className="text-sm font-normal text-slate-400">{service.period}</span>
                                     </div>
-                                    <p className="text-sm text-slate-600 mb-6">{service.description}</p>
+                                    <p
+                                        className="text-sm text-slate-600 mb-6 line-clamp-3"
+                                        title={service.description}
+                                    >
+                                        {service.description}
+                                    </p>
                                     <ul className="text-sm text-slate-600 space-y-4 mb-8 flex-1">
                                         {(service.features || []).map((feature, i) => (
                                             <li key={i} className="flex gap-3">
