@@ -5,6 +5,7 @@ import { ArrowLeft, Download, ChevronRight, X, Mail, CheckCircle } from 'lucide-
 import { LibraryBook, LibraryChapter, supabase } from '@/lib/supabase';
 import { SimpleMarkdown } from './SimpleMarkdown';
 import { Button } from '@/components/ui/Button';
+import { ContentProtection } from '@/components/ContentProtection';
 
 interface ReaderViewProps {
     book: LibraryBook;
@@ -240,83 +241,89 @@ export function ReaderView({ book, onBack }: ReaderViewProps) {
                     {/* Content */}
                     <div ref={contentRef} className="flex-1 overflow-y-auto py-8 px-4 md:py-12 md:px-8 flex justify-center items-start bg-[#e8e4dc]">
                         <div className="w-full max-w-[650px] bg-white shadow-2xl px-10 py-14 md:px-16 md:py-20 relative mb-8 min-h-[850px]">
-                            {loading ? (
-                                <div className="text-center py-20 text-stone-500">
-                                    <div className="animate-spin w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-                                    Loading content...
-                                </div>
-                            ) : currentChapter ? (
-                                <>
-                                    {/* Book Header */}
-                                    <div className="mb-12 text-center">
-                                        <p className="text-xs uppercase tracking-[0.2em] text-stone-400 mb-4">SatuLibrary Collection</p>
-                                        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">{book.title}</h1>
-                                        <div className="w-12 h-1 bg-emerald-600 mx-auto"></div>
+                            <ContentProtection
+                                enableRightClickBlock={true}
+                                enableTextSelectionBlock={true}
+                                showCopyrightNotice={true}
+                            >
+                                {loading ? (
+                                    <div className="text-center py-20 text-stone-500">
+                                        <div className="animate-spin w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                                        Loading content...
                                     </div>
+                                ) : currentChapter ? (
+                                    <>
+                                        {/* Book Header */}
+                                        <div className="mb-12 text-center">
+                                            <p className="text-xs uppercase tracking-[0.2em] text-stone-400 mb-4">SatuLibrary Collection</p>
+                                            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">{book.title}</h1>
+                                            <div className="w-12 h-1 bg-emerald-600 mx-auto"></div>
+                                        </div>
 
-                                    {/* Chapter Title */}
-                                    {chapters.length > 1 && (
-                                        <div className="mb-8 pb-4 border-b border-stone-200">
-                                            {currentChapter.title.toLowerCase().startsWith('chapter') ? (
-                                                <>
-                                                    <span className="text-xs font-mono text-slate-400 uppercase">
-                                                        {currentChapter.title.split(':')[0]}
-                                                    </span>
-                                                    <h2 className="text-2xl font-bold text-slate-900">
-                                                        {currentChapter.title.includes(':')
-                                                            ? currentChapter.title.split(':').slice(1).join(':').trim()
-                                                            : currentChapter.title}
-                                                    </h2>
-                                                </>
+                                        {/* Chapter Title */}
+                                        {chapters.length > 1 && (
+                                            <div className="mb-8 pb-4 border-b border-stone-200">
+                                                {currentChapter.title.toLowerCase().startsWith('chapter') ? (
+                                                    <>
+                                                        <span className="text-xs font-mono text-slate-400 uppercase">
+                                                            {currentChapter.title.split(':')[0]}
+                                                        </span>
+                                                        <h2 className="text-2xl font-bold text-slate-900">
+                                                            {currentChapter.title.includes(':')
+                                                                ? currentChapter.title.split(':').slice(1).join(':').trim()
+                                                                : currentChapter.title}
+                                                        </h2>
+                                                    </>
+                                                ) : (
+                                                    <h2 className="text-2xl font-bold text-slate-900">{currentChapter.title}</h2>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Content */}
+                                        <SimpleMarkdown content={getCleanedContent(currentChapter)} />
+
+                                        {/* Navigation */}
+                                        <div className="mt-20 pt-10 border-t border-stone-100 flex justify-between items-center">
+                                            {activeChapter > 0 ? (
+                                                <button
+                                                    onClick={() => navigateToChapter(activeChapter - 1)}
+                                                    className="text-sm font-bold text-slate-600 hover:text-slate-900 flex items-center gap-2"
+                                                >
+                                                    <ArrowLeft size={16} /> Previous
+                                                </button>
                                             ) : (
-                                                <h2 className="text-2xl font-bold text-slate-900">{currentChapter.title}</h2>
+                                                <div></div>
+                                            )}
+                                            {activeChapter < chapters.length - 1 ? (
+                                                <button
+                                                    onClick={() => navigateToChapter(activeChapter + 1)}
+                                                    className="text-sm font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-2"
+                                                >
+                                                    Next <ChevronRight size={16} />
+                                                </button>
+                                            ) : (
+                                                <span className="italic text-stone-400 text-sm">* End of Reading *</span>
                                             )}
                                         </div>
-                                    )}
 
-                                    {/* Content */}
-                                    <SimpleMarkdown content={getCleanedContent(currentChapter)} />
-
-                                    {/* Navigation */}
-                                    <div className="mt-20 pt-10 border-t border-stone-100 flex justify-between items-center">
-                                        {activeChapter > 0 ? (
-                                            <button
-                                                onClick={() => navigateToChapter(activeChapter - 1)}
-                                                className="text-sm font-bold text-slate-600 hover:text-slate-900 flex items-center gap-2"
-                                            >
-                                                <ArrowLeft size={16} /> Previous
-                                            </button>
-                                        ) : (
-                                            <div></div>
+                                        {/* Download CTA */}
+                                        {!isDownloadFree && activeChapter === chapters.length - 1 && (
+                                            <div className="bg-emerald-50 p-6 rounded-xl border border-emerald-100 mt-8 text-center">
+                                                <h4 className="font-sans font-bold text-emerald-800 mb-2">Want to keep this guide?</h4>
+                                                <p className="font-sans text-sm text-emerald-600 mb-4">Download the full PDF version for offline reference.</p>
+                                                <Button onClick={() => setShowEmailModal(true)} className="w-full justify-center bg-emerald-600 hover:bg-emerald-700 text-white border-none">
+                                                    Get PDF ({downloadPrice})
+                                                </Button>
+                                            </div>
                                         )}
-                                        {activeChapter < chapters.length - 1 ? (
-                                            <button
-                                                onClick={() => navigateToChapter(activeChapter + 1)}
-                                                className="text-sm font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-2"
-                                            >
-                                                Next <ChevronRight size={16} />
-                                            </button>
-                                        ) : (
-                                            <span className="italic text-stone-400 text-sm">* End of Reading *</span>
-                                        )}
+                                    </>
+                                ) : (
+                                    <div className="text-center py-20 text-stone-500">
+                                        <p>No content available for this book.</p>
                                     </div>
-
-                                    {/* Download CTA */}
-                                    {!isDownloadFree && activeChapter === chapters.length - 1 && (
-                                        <div className="bg-emerald-50 p-6 rounded-xl border border-emerald-100 mt-8 text-center">
-                                            <h4 className="font-sans font-bold text-emerald-800 mb-2">Want to keep this guide?</h4>
-                                            <p className="font-sans text-sm text-emerald-600 mb-4">Download the full PDF version for offline reference.</p>
-                                            <Button onClick={() => setShowEmailModal(true)} className="w-full justify-center bg-emerald-600 hover:bg-emerald-700 text-white border-none">
-                                                Get PDF ({downloadPrice})
-                                            </Button>
-                                        </div>
-                                    )}
-                                </>
-                            ) : (
-                                <div className="text-center py-20 text-stone-500">
-                                    <p>No content available for this book.</p>
-                                </div>
-                            )}
+                                )}
+                            </ContentProtection>
                         </div>
                     </div>
                 </div>
