@@ -80,6 +80,10 @@ export default function HomePage() {
 
       {/* Animated Filtering Ticker */}
       <section className="py-8 bg-slate-900 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-6">
+          <SectionLabel text="Clarity" light />
+          <h2 className="text-3xl text-white font-bold">This Is Not For Everyone</h2>
+        </div>
         <div className="relative">
           <div className="flex items-center gap-8 animate-scroll whitespace-nowrap">
             <span className="text-emerald-400 font-bold uppercase text-sm tracking-wider">This Is Not For Everyone</span>
