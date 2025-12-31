@@ -1,9 +1,37 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Twitter, Linkedin, Mail } from 'lucide-react';
+import { Twitter, Linkedin, Mail, Instagram, Github } from 'lucide-react';
 import { BrandLogo } from './ui/BrandLogo';
+import { supabase, SiteSetting } from '@/lib/supabase';
 
 export function Footer() {
+    const [settings, setSettings] = useState<Record<string, string>>({});
+
+    useEffect(() => {
+        async function fetchSettings() {
+            const { data } = await supabase
+                .from('ab_site_settings')
+                .select('key, value');
+
+            if (data) {
+                const settingsMap = data.reduce((acc, curr) => ({
+                    ...acc,
+                    [curr.key]: curr.value
+                }), {});
+                setSettings(settingsMap);
+            }
+        }
+        fetchSettings();
+    }, []);
+
+    const twitterUrl = settings['social_twitter'] || 'https://twitter.com/asrulbasri';
+    const linkedinUrl = settings['social_linkedin'] || 'https://linkedin.com/in/asrulbasri';
+    const instagramUrl = settings['social_instagram'];
+    const githubUrl = settings['social_github'];
+    const contactEmail = settings['contact_email'] || 'hello@asrulbasri.com';
+
     return (
         <footer className="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
             <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12">
@@ -17,13 +45,23 @@ export function Footer() {
                         Execution over theory. Helping you build systems, leverage tools, and master the operator mindset.
                     </p>
                     <div className="flex gap-4">
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                        <a href={twitterUrl} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                             <Twitter size={20} />
                         </a>
-                        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                        <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                             <Linkedin size={20} />
                         </a>
-                        <a href="mailto:hello@asrulbasri.com" className="hover:text-white transition-colors">
+                        {instagramUrl && (
+                            <a href={instagramUrl} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                                <Instagram size={20} />
+                            </a>
+                        )}
+                        {githubUrl && (
+                            <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                                <Github size={20} />
+                            </a>
+                        )}
+                        <a href={`mailto:${contactEmail}`} className="hover:text-white transition-colors">
                             <Mail size={20} />
                         </a>
                     </div>

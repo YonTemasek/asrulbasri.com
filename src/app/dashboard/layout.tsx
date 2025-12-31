@@ -14,6 +14,7 @@ const NAV_ITEMS = [
     { id: 'content', label: 'Content', path: '/dashboard/content', icon: FileText },
     { id: 'subscribers', label: 'Subscribers', path: '/dashboard/subscribers', icon: Users },
     { id: 'legal', label: 'Legal Pages', path: '/dashboard/legal', icon: Scale },
+    { id: 'settings', label: 'Settings', path: '/dashboard/settings', icon: Settings },
 ];
 
 const MOTIVATION_MESSAGES = [
