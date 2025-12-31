@@ -1,0 +1,12 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow admin/dashboard areas
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /api/
+Disallow: /login
+
+# Sitemap location
+Sitemap: https://asrulbasri.com/sitemap.xml

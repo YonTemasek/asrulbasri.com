@@ -1,0 +1,895 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { Plus, Edit, Trash2, Save, X, BookOpen, Upload, FileText, CheckCircle } from 'lucide-react';
+import { supabase, LibraryBook, LibraryChapter } from '@/lib/supabase';
+import { Button } from '@/components/ui/Button';
+
+export default function ProductsPage() {
+    const [books, setBooks] = useState<LibraryBook[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [showForm, setShowForm] = useState(false);
+    const [editingBook, setEditingBook] = useState<LibraryBook | null>(null);
+    const [showChapterModal, setShowChapterModal] = useState(false);
+    const [selectedBookForChapters, setSelectedBookForChapters] = useState<LibraryBook | null>(null);
+    const [chapters, setChapters] = useState<LibraryChapter[]>([]);
+    const [activeTab, setActiveTab] = useState<'all' | 'free' | 'premium'>('all');
+
+    // Form state
+    const [formData, setFormData] = useState({
+        title: '',
+        description: '',
+        price: 'Free',
+        download_price: '',
+        payment_link: '',
+        category: '',
+        image_color: 'bg-slate-100',
+        text_color: 'text-slate-700',
+        tag: '',
+    });
+
+    // Chapter form state
+    const [chapterForm, setChapterForm] = useState({
+        title: '',
+        content: '',
+        sort_order: 0,
+    });
+    const [editingChapter, setEditingChapter] = useState<LibraryChapter | null>(null);
+
+    // Import book state
+    const [chapterTab, setChapterTab] = useState<'single' | 'import'>('single');
+    const [importContent, setImportContent] = useState('');
+    const [detectedChapters, setDetectedChapters] = useState<{ title: string; content: string; order: number }[]>([]);
+    const [importing, setImporting] = useState(false);
+
+    // Delete confirmation state
+    const [deleteBookId, setDeleteBookId] = useState<number | null>(null);
+    const [deleteChapterId, setDeleteChapterId] = useState<number | null>(null);
+
+    useEffect(() => {
+        fetchBooks();
+    }, []);
+
+    const fetchBooks = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('ab_library_books')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            setBooks(data || []);
+        } catch (error) {
+            console.error('Error fetching books:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchChapters = async (bookId: number) => {
+        try {
+            const { data, error } = await supabase
+                .from('ab_library_chapters')
+                .select('*')
+                .eq('book_id', bookId)
+                .order('sort_order', { ascending: true });
+
+            if (error) throw error;
+            setChapters(data || []);
+        } catch (error) {
+            console.error('Error fetching chapters:', error);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            if (editingBook) {
+                const { error } = await supabase
+                    .from('ab_library_books')
+                    .update(formData)
+                    .eq('id', editingBook.id);
+                if (error) throw error;
+            } else {
+                const { error } = await supabase
+                    .from('ab_library_books')
+                    .insert(formData);
+                if (error) throw error;
+            }
+
+            setShowForm(false);
+            setEditingBook(null);
+            resetForm();
+            fetchBooks();
+        } catch (error) {
+            console.error('Error saving book:', error);
+            alert('Error saving book. Please try again.');
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        setDeleteBookId(id);
+    };
+
+    const confirmDelete = async () => {
+        if (!deleteBookId) return;
+
+        try {
+            const { error } = await supabase
+                .from('ab_library_books')
+                .delete()
+                .eq('id', deleteBookId);
+            if (error) throw error;
+            fetchBooks();
+        } catch (error) {
+            console.error('Error deleting book:', error);
+        } finally {
+            setDeleteBookId(null);
+        }
+    };
+
+    const handleEdit = (book: LibraryBook) => {
+        setEditingBook(book);
+        setFormData({
+            title: book.title,
+            description: book.description || '',
+            price: book.price,
+            download_price: book.download_price || '',
+            payment_link: book.payment_link || '',
+            category: book.category || '',
+            image_color: book.image_color || 'bg-slate-100',
+            text_color: book.text_color || 'text-slate-700',
+            tag: book.tag || '',
+        });
+        setShowForm(true);
+    };
+
+    const resetForm = () => {
+        setFormData({
+            title: '',
+            description: '',
+            price: 'Free',
+            download_price: '',
+            payment_link: '',
+            category: '',
+            image_color: 'bg-slate-100',
+            text_color: 'text-slate-700',
+            tag: '',
+        });
+    };
+
+    const openChapterManager = async (book: LibraryBook) => {
+        setSelectedBookForChapters(book);
+        await fetchChapters(book.id);
+        setShowChapterModal(true);
+    };
+
+    const handleChapterSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!selectedBookForChapters) return;
+
+        try {
+            if (editingChapter) {
+                const { error } = await supabase
+                    .from('ab_library_chapters')
+                    .update({
+                        title: chapterForm.title,
+                        content: chapterForm.content,
+                        sort_order: chapterForm.sort_order,
+                    })
+                    .eq('id', editingChapter.id);
+                if (error) throw error;
+            } else {
+                const { error } = await supabase
+                    .from('ab_library_chapters')
+                    .insert({
+                        book_id: selectedBookForChapters.id,
+                        title: chapterForm.title,
+                        content: chapterForm.content,
+                        sort_order: chapterForm.sort_order,
+                    });
+                if (error) throw error;
+            }
+
+            setChapterForm({ title: '', content: '', sort_order: 0 });
+            setEditingChapter(null);
+            fetchChapters(selectedBookForChapters.id);
+        } catch (error) {
+            console.error('Error saving chapter:', error);
+            alert('Error saving chapter. Please try again.');
+        }
+    };
+
+    const handleEditChapter = (chapter: LibraryChapter) => {
+        setEditingChapter(chapter);
+        setChapterForm({
+            title: chapter.title,
+            content: chapter.content || '',
+            sort_order: chapter.sort_order,
+        });
+    };
+
+    const handleDeleteChapter = async (id: number) => {
+        setDeleteChapterId(id);
+    };
+
+    const confirmDeleteChapter = async () => {
+        if (!deleteChapterId) return;
+        if (!selectedBookForChapters) return;
+
+        try {
+            const { error } = await supabase
+                .from('ab_library_chapters')
+                .delete()
+                .eq('id', deleteChapterId);
+            if (error) throw error;
+            fetchChapters(selectedBookForChapters.id);
+        } catch (error) {
+            console.error('Error deleting chapter:', error);
+        } finally {
+            setDeleteChapterId(null);
+        }
+    };
+
+    // Universal chapter detection - split by # (H1) headings
+    const detectChapters = () => {
+        if (!importContent.trim()) return;
+
+        const lines = importContent.split('\n');
+        const sections: { title: string; content: string; order: number }[] = [];
+
+        let currentSection: { title: string; lines: string[]; order: number } | null = null;
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const trimmed = line.trim();
+
+            // Detect any # heading (H1) as new section
+            // Match: # Title, # **Title**, # CHAPTER X, etc.
+            const h1Match = trimmed.match(/^#\s+(.+)$/) || trimmed.match(/^#\s*\*\*(.+)\*\*$/);
+
+            if (h1Match) {
+                // Save previous section
+                if (currentSection && currentSection.lines.length > 0) {
+                    sections.push({
+                        title: currentSection.title,
+                        content: currentSection.lines.join('\n').trim(),
+                        order: currentSection.order
+                    });
+                }
+
+                // Extract title - remove markdown formatting
+                let title = h1Match[1]
+                    .replace(/\*\*/g, '')  // Remove bold
+                    .replace(/\*/g, '')    // Remove italic
+                    .trim();
+
+                currentSection = {
+                    title: title,
+                    lines: [],  // Don't include the heading line in content
+                    order: sections.length
+                };
+            } else if (currentSection) {
+                currentSection.lines.push(line);
+            }
+            // Content before first heading is ignored (usually cover/title)
+        }
+
+        // Save last section
+        if (currentSection && currentSection.lines.length > 0) {
+            sections.push({
+                title: currentSection.title,
+                content: currentSection.lines.join('\n').trim(),
+                order: currentSection.order
+            });
+        }
+
+        // Filter out empty sections and reorder
+        const finalSections = sections
+            .filter(s => s.content.trim().length > 10)  // Skip nearly empty sections
+            .map((s, idx) => ({ ...s, order: idx }));
+
+        setDetectedChapters(finalSections);
+    };
+
+
+    // Import all detected chapters
+    const handleImportAllChapters = async () => {
+        if (!selectedBookForChapters || detectedChapters.length === 0) return;
+
+        setImporting(true);
+        try {
+            // Insert all chapters
+            const chaptersToInsert = detectedChapters.map(ch => ({
+                book_id: selectedBookForChapters.id,
+                title: ch.title,
+                content: ch.content,
+                sort_order: ch.order
+            }));
+
+            const { error } = await supabase
+                .from('ab_library_chapters')
+                .insert(chaptersToInsert);
+
+            if (error) throw error;
+
+            // Reset and refresh
+            setImportContent('');
+            setDetectedChapters([]);
+            setChapterTab('single');
+            fetchChapters(selectedBookForChapters.id);
+
+            alert(`✅ Successfully imported ${detectedChapters.length} chapters!`);
+        } catch (error) {
+            console.error('Error importing chapters:', error);
+            alert('Error importing chapters. Please try again.');
+        } finally {
+            setImporting(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <div className="animate-spin w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full"></div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="animate-fade-in">
+            <header className="flex justify-between items-center mb-8">
+                <h1 className="text-4xl font-serif font-bold">Products</h1>
+                <Button primary onClick={() => { resetForm(); setEditingBook(null); setShowForm(true); }}>
+                    Add new product
+                </Button>
+            </header>
+
+            {/* Delete Confirmation Modal */}
+            {deleteBookId !== null && typeof document !== 'undefined' && createPortal(
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+                    <div className="bg-white w-full max-w-sm mx-4 rounded-2xl shadow-2xl p-6">
+                        <div className="text-center">
+                            <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                                <Trash2 className="text-red-500" size={24} />
+                            </div>
+                            <h3 className="text-lg font-bold text-slate-800 mb-2">Delete Book?</h3>
+                            <p className="text-slate-600 mb-6">Are you sure you want to delete this book? This action cannot be undone.</p>
+                            <div className="flex gap-3 justify-center">
+                                <button
+                                    onClick={() => setDeleteBookId(null)}
+                                    className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 font-medium"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmDelete}
+                                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-medium"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+
+            {/* Book Form Modal - Full Screen via Portal */}
+            {showForm && typeof document !== 'undefined' && createPortal(
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+                    <div className="bg-white w-full max-w-xl mx-4 rounded-2xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-bold">{editingBook ? 'Edit Book' : 'Add New Book'}</h2>
+                            <button onClick={() => setShowForm(false)} className="text-slate-400 hover:text-slate-600">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-3">
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Title *</label>
+                                <input
+                                    required
+                                    value={formData.title}
+                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                    className="w-full p-3 border border-slate-200 rounded-lg"
+                                    placeholder="e.g. Panduan Bisnes 2025"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Description</label>
+                                <textarea
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    className="w-full p-3 border border-slate-200 rounded-lg h-20"
+                                    placeholder="Short description..."
+                                />
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">Price</label>
+                                    <div className="flex items-center gap-2">
+                                        <label className="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.price === 'Free'}
+                                                onChange={(e) => setFormData({ ...formData, price: e.target.checked ? 'Free' : 'RM 29' })}
+                                                className="w-4 h-4 accent-emerald-600"
+                                            />
+                                            <span className="text-sm font-medium text-slate-600">Free</span>
+                                        </label>
+                                        {formData.price !== 'Free' && (
+                                            <div className="flex items-center flex-1">
+                                                <span className="px-3 py-2 bg-slate-100 border border-r-0 border-slate-200 rounded-l-lg text-sm font-bold text-slate-600">RM</span>
+                                                <input
+                                                    type="number"
+                                                    value={parseInt(formData.price.replace('RM ', '')) || ''}
+                                                    onChange={(e) => setFormData({ ...formData, price: `RM ${e.target.value}` })}
+                                                    className="flex-1 p-2 border border-slate-200 rounded-r-lg w-20"
+                                                    min="1"
+                                                    placeholder="29"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">Download Price</label>
+                                    <div className="flex items-center gap-2">
+                                        <label className="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50">
+                                            <input
+                                                type="checkbox"
+                                                checked={formData.download_price === 'Free' || !formData.download_price}
+                                                onChange={(e) => setFormData({ ...formData, download_price: e.target.checked ? 'Free' : 'RM 29' })}
+                                                className="w-4 h-4 accent-emerald-600"
+                                            />
+                                            <span className="text-sm font-medium text-slate-600">Free</span>
+                                        </label>
+                                        {formData.download_price && formData.download_price !== 'Free' && (
+                                            <div className="flex items-center flex-1">
+                                                <span className="px-3 py-2 bg-slate-100 border border-r-0 border-slate-200 rounded-l-lg text-sm font-bold text-slate-600">RM</span>
+                                                <input
+                                                    type="number"
+                                                    value={parseInt(formData.download_price.replace('RM ', '')) || ''}
+                                                    onChange={(e) => setFormData({ ...formData, download_price: `RM ${e.target.value}` })}
+                                                    className="flex-1 p-2 border border-slate-200 rounded-r-lg w-20"
+                                                    min="1"
+                                                    placeholder="29"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">Category</label>
+                                    <select
+                                        value={formData.category}
+                                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                                        className="w-full p-3 border border-slate-200 rounded-lg bg-white"
+                                    >
+                                        <option value="">Select Category</option>
+                                        <option value="Strategy">Strategy</option>
+                                        <option value="Productivity">Productivity</option>
+                                        <option value="Tech">Tech</option>
+                                        <option value="Travel">Travel</option>
+                                        <option value="Business">Business</option>
+                                        <option value="Mindset">Mindset</option>
+                                        <option value="Operations">Operations</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">Tag</label>
+                                    <select
+                                        value={formData.tag}
+                                        onChange={(e) => setFormData({ ...formData, tag: e.target.value })}
+                                        className="w-full p-3 border border-slate-200 rounded-lg bg-white"
+                                    >
+                                        <option value="">No Tag</option>
+                                        <option value="Premium">Premium</option>
+                                        <option value="Must Read">Must Read</option>
+                                        <option value="New">New</option>
+                                        <option value="Popular">Popular</option>
+                                        <option value="Free">Free</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Payment Link</label>
+                                <input
+                                    value={formData.payment_link}
+                                    onChange={(e) => setFormData({ ...formData, payment_link: e.target.value })}
+                                    className="w-full p-3 border border-slate-200 rounded-lg"
+                                    placeholder="https://stripe.com/..."
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Cover Color</label>
+                                <div className="grid grid-cols-6 gap-2">
+                                    {[
+                                        { bg: 'bg-slate-100', text: 'text-slate-700', label: 'Slate' },
+                                        { bg: 'bg-red-50', text: 'text-red-700', label: 'Red' },
+                                        { bg: 'bg-orange-50', text: 'text-orange-700', label: 'Orange' },
+                                        { bg: 'bg-amber-50', text: 'text-amber-800', label: 'Amber' },
+                                        { bg: 'bg-yellow-50', text: 'text-yellow-700', label: 'Yellow' },
+                                        { bg: 'bg-lime-50', text: 'text-lime-700', label: 'Lime' },
+                                        { bg: 'bg-green-50', text: 'text-green-700', label: 'Green' },
+                                        { bg: 'bg-emerald-50', text: 'text-emerald-700', label: 'Emerald' },
+                                        { bg: 'bg-teal-50', text: 'text-teal-700', label: 'Teal' },
+                                        { bg: 'bg-cyan-50', text: 'text-cyan-700', label: 'Cyan' },
+                                        { bg: 'bg-sky-50', text: 'text-sky-700', label: 'Sky' },
+                                        { bg: 'bg-blue-50', text: 'text-blue-700', label: 'Blue' },
+                                        { bg: 'bg-indigo-50', text: 'text-indigo-700', label: 'Indigo' },
+                                        { bg: 'bg-violet-50', text: 'text-violet-700', label: 'Violet' },
+                                        { bg: 'bg-purple-50', text: 'text-purple-700', label: 'Purple' },
+                                        { bg: 'bg-fuchsia-50', text: 'text-fuchsia-700', label: 'Fuchsia' },
+                                        { bg: 'bg-pink-50', text: 'text-pink-700', label: 'Pink' },
+                                        { bg: 'bg-rose-50', text: 'text-rose-700', label: 'Rose' },
+                                    ].map((color) => (
+                                        <button
+                                            key={color.bg}
+                                            type="button"
+                                            onClick={() => setFormData({ ...formData, image_color: color.bg, text_color: color.text })}
+                                            className={`h-10 rounded-lg border-2 transition-all ${color.bg} ${formData.image_color === color.bg
+                                                ? 'border-slate-900 ring-2 ring-slate-900 ring-offset-1'
+                                                : 'border-slate-200 hover:border-slate-400'
+                                                }`}
+                                            title={color.label}
+                                        />
+                                    ))}
+                                </div>
+                                <p className="text-xs text-slate-400 mt-2">Text color will auto-match for contrast</p>
+                            </div>
+                            <div className="flex gap-3 pt-4">
+                                <Button primary type="submit">
+                                    <Save size={16} /> {editingBook ? 'Update' : 'Create'} Book
+                                </Button>
+                                <Button onClick={() => setShowForm(false)}>Cancel</Button>
+                            </div>
+                        </form>
+                    </div>
+                </div>,
+                document.body
+            )}
+
+            {/* Delete Chapter Confirmation Modal */}
+            {deleteChapterId !== null && typeof document !== 'undefined' && createPortal(
+                <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+                    <div className="bg-white w-full max-w-sm mx-4 rounded-2xl shadow-2xl p-6">
+                        <div className="text-center">
+                            <div className="mx-auto w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                                <Trash2 className="text-red-500" size={24} />
+                            </div>
+                            <h3 className="text-lg font-bold text-slate-800 mb-2">Delete Chapter?</h3>
+                            <p className="text-slate-600 mb-6">Are you sure you want to delete this chapter?</p>
+                            <div className="flex gap-3 justify-center">
+                                <button
+                                    onClick={() => setDeleteChapterId(null)}
+                                    className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 font-medium"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmDeleteChapter}
+                                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-medium"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+
+            {/* Chapter Manager Modal via Portal */}
+            {showChapterModal && selectedBookForChapters && typeof document !== 'undefined' && createPortal(
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm">
+                    <div className="bg-white w-full max-w-4xl mx-4 rounded-2xl shadow-2xl p-6 max-h-[90vh] overflow-y-auto">
+                        <div className="flex justify-between items-center mb-4">
+                            <div>
+                                <h2 className="text-xl font-bold">Manage Chapters</h2>
+                                <p className="text-slate-600 text-sm">{selectedBookForChapters.title}</p>
+                            </div>
+                            <button onClick={() => setShowChapterModal(false)} className="text-slate-400 hover:text-slate-600">
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Tabs */}
+                        <div className="flex gap-2 mb-4">
+                            <button
+                                onClick={() => setChapterTab('single')}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${chapterTab === 'single'
+                                    ? 'bg-emerald-500 text-white'
+                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    }`}
+                            >
+                                <FileText size={16} /> Add Single Chapter
+                            </button>
+                            <button
+                                onClick={() => setChapterTab('import')}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${chapterTab === 'import'
+                                    ? 'bg-emerald-500 text-white'
+                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    }`}
+                            >
+                                <Upload size={16} /> Import Full Book
+                            </button>
+                        </div>
+
+                        {/* Import Full Book Tab */}
+                        {chapterTab === 'import' && (
+                            <div className="bg-slate-50 p-4 rounded-xl mb-6 space-y-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                                        📋 Paste Full Book Content (Markdown)
+                                    </label>
+                                    <textarea
+                                        value={importContent}
+                                        onChange={(e) => setImportContent(e.target.value)}
+                                        className="w-full p-3 border border-slate-200 rounded-lg h-48 font-mono text-sm"
+                                        placeholder="Paste your entire book content here...
+
+# **CHAPTER 1**
+# 
+# THE OPERATING SYSTEM MINDSET
+..."
+                                    />
+                                </div>
+
+                                <Button
+                                    onClick={detectChapters}
+                                    primary
+                                    type="button"
+                                >
+                                    🔄 Auto-Detect Chapters
+                                </Button>
+
+                                {/* Detected Chapters Preview */}
+                                {detectedChapters.length > 0 && (
+                                    <div className="border border-emerald-200 bg-emerald-50 rounded-lg p-4">
+                                        <h4 className="font-bold text-emerald-800 mb-3 flex items-center gap-2">
+                                            <CheckCircle size={18} /> Detected {detectedChapters.length} Sections:
+                                        </h4>
+                                        <div className="space-y-2 max-h-48 overflow-y-auto">
+                                            {detectedChapters.map((ch, idx) => (
+                                                <div key={idx} className="flex items-center gap-2 text-sm">
+                                                    <span className="w-6 h-6 bg-emerald-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                                                        {ch.order}
+                                                    </span>
+                                                    <span className="font-medium">{ch.title}</span>
+                                                    <span className="text-slate-400 text-xs">
+                                                        ({ch.content.length.toLocaleString()} chars)
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="mt-4 pt-4 border-t border-emerald-200">
+                                            <Button
+                                                onClick={handleImportAllChapters}
+                                                primary
+                                                type="button"
+                                                disabled={importing}
+                                            >
+                                                {importing ? '⏳ Importing...' : `💾 Save All ${detectedChapters.length} Chapters`}
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Single Chapter Form */}
+                        {chapterTab === 'single' && (
+                            <form onSubmit={handleChapterSubmit} className="bg-slate-50 p-4 rounded-xl mb-6 space-y-3">
+                                <div className="grid grid-cols-4 gap-3">
+                                    <div className="col-span-3">
+                                        <label className="block text-sm font-bold text-slate-700 mb-1">Chapter Title</label>
+                                        <input
+                                            required
+                                            value={chapterForm.title}
+                                            onChange={(e) => setChapterForm({ ...chapterForm, title: e.target.value })}
+                                            className="w-full p-3 border border-slate-200 rounded-lg"
+                                            placeholder="e.g. Introduction"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-bold text-slate-700 mb-1">Order</label>
+                                        <input
+                                            type="number"
+                                            value={chapterForm.sort_order}
+                                            onChange={(e) => setChapterForm({ ...chapterForm, sort_order: parseInt(e.target.value) || 0 })}
+                                            className="w-full p-3 border border-slate-200 rounded-lg"
+                                        />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">Content (Markdown)</label>
+                                    <textarea
+                                        value={chapterForm.content}
+                                        onChange={(e) => setChapterForm({ ...chapterForm, content: e.target.value })}
+                                        className="w-full p-3 border border-slate-200 rounded-lg h-40 font-mono text-sm"
+                                        placeholder="# Chapter Title&#10;&#10;Write your content in Markdown..."
+                                    />
+                                </div>
+                                <div className="flex gap-2">
+                                    <Button primary type="submit">
+                                        <Save size={16} /> {editingChapter ? 'Update' : 'Add'} Chapter
+                                    </Button>
+                                    {editingChapter && (
+                                        <Button onClick={() => { setEditingChapter(null); setChapterForm({ title: '', content: '', sort_order: 0 }); }}>
+                                            Cancel Edit
+                                        </Button>
+                                    )}
+                                </div>
+                            </form>
+                        )}
+
+                        {/* Chapter List */}
+                        <div className="space-y-2">
+                            {chapters.length > 0 ? (
+                                chapters.map((chapter) => (
+                                    <div key={chapter.id} className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-lg">
+                                        <div>
+                                            <span className="text-xs font-mono text-slate-400 mr-2">#{chapter.sort_order}</span>
+                                            <span className="font-medium">{chapter.title}</span>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => handleEditChapter(chapter)} className="text-slate-400 hover:text-slate-600">
+                                                <Edit size={16} />
+                                            </button>
+                                            <button onClick={() => handleDeleteChapter(chapter.id)} className="text-red-400 hover:text-red-600">
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-slate-600 text-center py-6">No chapters yet. Add your first chapter above.</p>
+                            )}
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
+
+            {/* Medium-style Products Layout */}
+            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+                {/* Tabs */}
+                <div className="border-b border-slate-100">
+                    <div className="flex gap-6 px-6">
+                        <button
+                            onClick={() => setActiveTab('all')}
+                            className={`py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === 'all'
+                                    ? 'border-slate-900 text-slate-900'
+                                    : 'border-transparent text-slate-400 hover:text-slate-600'
+                                }`}
+                        >
+                            All <span className="ml-1 text-slate-400">{books.length}</span>
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('free')}
+                            className={`py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === 'free'
+                                    ? 'border-slate-900 text-slate-900'
+                                    : 'border-transparent text-slate-400 hover:text-slate-600'
+                                }`}
+                        >
+                            Free <span className="ml-1">{books.filter(b => b.price === 'Free').length}</span>
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('premium')}
+                            className={`py-4 text-sm font-medium border-b-2 transition-colors ${activeTab === 'premium'
+                                    ? 'border-slate-900 text-slate-900'
+                                    : 'border-transparent text-slate-400 hover:text-slate-600'
+                                }`}
+                        >
+                            Premium <span className="ml-1">{books.filter(b => b.price !== 'Free').length}</span>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Products List */}
+                <div className="divide-y divide-slate-100">
+                    {books
+                        .filter(book => {
+                            if (activeTab === 'free') return book.price === 'Free';
+                            if (activeTab === 'premium') return book.price !== 'Free';
+                            return true;
+                        })
+                        .length > 0 ? (
+                        books
+                            .filter(book => {
+                                if (activeTab === 'free') return book.price === 'Free';
+                                if (activeTab === 'premium') return book.price !== 'Free';
+                                return true;
+                            })
+                            .map((book) => (
+                                <div key={book.id} className="flex items-start gap-4 p-6 hover:bg-slate-50 transition group">
+                                    {/* Book Cover */}
+                                    <div className={`w-16 h-20 rounded-lg ${book.image_color || 'bg-slate-100'} flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                                        <span className={`text-xs font-bold ${book.text_color || 'text-slate-600'} text-center px-1 leading-tight`}>
+                                            {book.title.split(' ').slice(0, 2).join(' ')}
+                                        </span>
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-start justify-between gap-4">
+                                            <div className="min-w-0">
+                                                {/* Title */}
+                                                <h3 className="font-bold text-slate-900 truncate group-hover:text-emerald-600 transition cursor-pointer" onClick={() => handleEdit(book)}>
+                                                    {book.title}
+                                                    {book.tag && (
+                                                        <span className="ml-2 bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[10px] font-bold align-middle">
+                                                            {book.tag}
+                                                        </span>
+                                                    )}
+                                                </h3>
+
+                                                {/* Description */}
+                                                {book.description && (
+                                                    <p className="text-sm text-slate-600 mt-1 line-clamp-1">{book.description}</p>
+                                                )}
+
+                                                {/* Metadata */}
+                                                <div className="flex items-center gap-3 mt-2 text-xs text-slate-400">
+                                                    <span className={`font-medium ${book.price === 'Free' ? 'text-emerald-600' : 'text-slate-600'}`}>
+                                                        {book.price}
+                                                    </span>
+                                                    {book.category && (
+                                                        <span className="bg-slate-100 px-2 py-0.5 rounded-full">
+                                                            {book.category}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Quick Actions (visible on hover) */}
+                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                                                <button
+                                                    onClick={() => openChapterManager(book)}
+                                                    className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition"
+                                                    title="Manage Chapters"
+                                                >
+                                                    <BookOpen size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleEdit(book)}
+                                                    className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                                                    title="Edit"
+                                                >
+                                                    <Edit size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(book.id)}
+                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                                                    title="Delete"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                    ) : (
+                        <div className="p-12 text-center">
+                            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <BookOpen size={24} className="text-slate-400" />
+                            </div>
+                            <h3 className="text-lg font-bold text-slate-900 mb-1">No products yet</h3>
+                            <p className="text-slate-600 mb-4">Start by adding your first book</p>
+                            <Button primary onClick={() => { resetForm(); setEditingBook(null); setShowForm(true); }}>
+                                <Plus size={16} /> Add your first product
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div >
+    );
+}
