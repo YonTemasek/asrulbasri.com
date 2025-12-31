@@ -41,7 +41,7 @@ export default function HomePage() {
         <div className="absolute inset-0 z-0 bg-slate-50">
           <img
             src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=2070&auto=format&fit=crop"
-            alt="Hero background"
+            alt=""
             className="w-full h-full object-cover grayscale opacity-20"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent"></div>
@@ -83,22 +83,24 @@ export default function HomePage() {
         <div className="relative">
           <div className="flex items-center gap-8 animate-scroll whitespace-nowrap">
             <span className="text-emerald-400 font-bold uppercase text-sm tracking-wider">This Is Not For Everyone</span>
-            <span className="text-slate-400">→</span>
+            <span className="text-slate-400" aria-hidden="true">→</span>
             <span className="text-white">You are looking for frameworks or templates</span>
-            <span className="text-slate-400">→</span>
+            <span className="text-slate-400" aria-hidden="true">→</span>
             <span className="text-white">You want someone to decide for you</span>
-            <span className="text-slate-400">→</span>
+            <span className="text-slate-400" aria-hidden="true">→</span>
             <span className="text-white">You are still collecting information instead of acting</span>
-            <span className="text-slate-400">→</span>
+            <span className="text-slate-400" aria-hidden="true">→</span>
             {/* Duplicate for seamless loop */}
-            <span className="text-emerald-400 font-bold uppercase text-sm tracking-wider">This Is Not For Everyone</span>
-            <span className="text-slate-400">→</span>
-            <span className="text-white">You are looking for frameworks or templates</span>
-            <span className="text-slate-400">→</span>
-            <span className="text-white">You want someone to decide for you</span>
-            <span className="text-slate-400">→</span>
-            <span className="text-white">You are still collecting information instead of acting</span>
-            <span className="text-slate-400">→</span>
+            <div className="flex items-center gap-8" aria-hidden="true">
+              <span className="text-emerald-400 font-bold uppercase text-sm tracking-wider">This Is Not For Everyone</span>
+              <span className="text-slate-400">→</span>
+              <span className="text-white">You are looking for frameworks or templates</span>
+              <span className="text-slate-400">→</span>
+              <span className="text-white">You want someone to decide for you</span>
+              <span className="text-slate-400">→</span>
+              <span className="text-white">You are still collecting information instead of acting</span>
+              <span className="text-slate-400">→</span>
+            </div>
           </div>
         </div>
       </section>
