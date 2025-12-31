@@ -53,11 +53,8 @@ export function ContentProtection({
 
     return (
         <div
-            className={enableTextSelectionBlock ? 'select-none' : ''}
             style={{
                 WebkitTouchCallout: 'none',
-                WebkitUserSelect: enableTextSelectionBlock ? 'none' : 'auto',
-                userSelect: enableTextSelectionBlock ? 'none' : 'auto',
             }}
         >
             {children}
