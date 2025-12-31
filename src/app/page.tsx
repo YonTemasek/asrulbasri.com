@@ -78,6 +78,31 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Animated Filtering Ticker */}
+      <section className="py-8 bg-slate-900 overflow-hidden">
+        <div className="relative">
+          <div className="flex items-center gap-8 animate-scroll whitespace-nowrap">
+            <span className="text-emerald-400 font-bold uppercase text-sm tracking-wider">This Is Not For Everyone</span>
+            <span className="text-slate-400">→</span>
+            <span className="text-white">You are looking for frameworks or templates</span>
+            <span className="text-slate-400">→</span>
+            <span className="text-white">You want someone to decide for you</span>
+            <span className="text-slate-400">→</span>
+            <span className="text-white">You are still collecting information instead of acting</span>
+            <span className="text-slate-400">→</span>
+            {/* Duplicate for seamless loop */}
+            <span className="text-emerald-400 font-bold uppercase text-sm tracking-wider">This Is Not For Everyone</span>
+            <span className="text-slate-400">→</span>
+            <span className="text-white">You are looking for frameworks or templates</span>
+            <span className="text-slate-400">→</span>
+            <span className="text-white">You want someone to decide for you</span>
+            <span className="text-slate-400">→</span>
+            <span className="text-white">You are still collecting information instead of acting</span>
+            <span className="text-slate-400">→</span>
+          </div>
+        </div>
+      </section>
+
       {/* Philosophy Section */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -216,30 +241,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Filtering Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-3xl mx-auto px-6 lg:px-8 text-center">
-          <SectionLabel text="Clarity" />
-          <h2 className="text-4xl font-bold mb-8">This Is Not For Everyone</h2>
-          <div className="text-left space-y-4 bg-slate-50 border border-slate-200 rounded-2xl p-8">
-            <p className="text-slate-600 mb-6">This is not for you if:</p>
-            <div className="space-y-4">
-              <div className="flex gap-3 items-start">
-                <div className="w-1.5 h-1.5 bg-slate-400 rounded-full mt-2 shrink-0"></div>
-                <p className="text-slate-700">You are looking for frameworks or templates</p>
-              </div>
-              <div className="flex gap-3 items-start">
-                <div className="w-1.5 h-1.5 bg-slate-400 rounded-full mt-2 shrink-0"></div>
-                <p className="text-slate-700">You want someone to decide for you</p>
-              </div>
-              <div className="flex gap-3 items-start">
-                <div className="w-1.5 h-1.5 bg-slate-400 rounded-full mt-2 shrink-0"></div>
-                <p className="text-slate-700">You are still collecting information instead of acting</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+
     </div>
   );
 }

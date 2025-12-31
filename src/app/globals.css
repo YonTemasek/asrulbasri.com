@@ -68,3 +68,21 @@ body {
   --tw-prose-th-borders: #cbd5e1;
   --tw-prose-td-borders: #e2e8f0;
 }
+
+/* Horizontal Scroll Animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
