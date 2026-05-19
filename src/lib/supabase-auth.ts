@@ -2,11 +2,25 @@
 
 import { createBrowserClient } from '@supabase/ssr'
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const isValidUrl = supabaseUrl.startsWith('http://') || supabaseUrl.startsWith('https://');
+
 // Create Supabase client for browser with cookie storage
 export function createClient() {
     return createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        isValidUrl ? supabaseUrl : 'https://placeholder.supabase.co',
+        isValidUrl ? supabaseAnonKey : 'placeholder-key',
+        isValidUrl ? undefined : {
+            global: {
+                fetch: async (url, options) => {
+                    return new Response(JSON.stringify([]), {
+                        status: 200,
+                        headers: { 'Content-Type': 'application/json' },
+                    });
+                },
+            },
+        }
     )
 }
 

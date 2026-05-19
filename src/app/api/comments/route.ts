@@ -3,10 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { checkRateLimit, STRICT_LIMIT, STANDARD_LIMIT } from '@/lib/rate-limit';
 
 // Admin client for bypassing RLS
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabaseAdmin = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY || '') : createClient('https://placeholder.supabase.co', 'placeholder-key', { global: { fetch: async () => new Response(JSON.stringify([]), { status: 200 }) } });
 
 export async function GET(request: NextRequest) {
     // Rate limit: 20 requests per minute

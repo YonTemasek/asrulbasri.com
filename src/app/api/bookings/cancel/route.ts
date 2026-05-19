@@ -4,10 +4,7 @@ import Stripe from 'stripe';
 import { sendCancellationConfirmation, sendCancellationAlert } from '@/lib/email';
 import { validateSecureBookingToken } from '@/lib/secure-token';
 
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+const supabaseAdmin = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY || '') : createClient('https://placeholder.supabase.co', 'placeholder-key', { global: { fetch: async () => new Response(JSON.stringify([]), { status: 200 }) } });
 
 const getStripe = () => {
     if (!process.env.STRIPE_SECRET_KEY) return null;

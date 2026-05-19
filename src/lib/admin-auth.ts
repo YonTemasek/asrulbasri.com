@@ -2,13 +2,17 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const isValidUrl = supabaseUrl.startsWith('http://') || supabaseUrl.startsWith('https://');
+
 // Check if user is authenticated admin
 export async function checkAdminAuth() {
     const cookieStore = await cookies();
 
     const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        isValidUrl ? supabaseUrl : 'https://placeholder.supabase.co',
+        isValidUrl ? supabaseAnonKey : 'placeholder-key',
         {
             cookies: {
                 getAll() {
@@ -18,6 +22,16 @@ export async function checkAdminAuth() {
                     // Not needed for read-only
                 },
             },
+            ...(isValidUrl ? {} : {
+                global: {
+                    fetch: async (url, options) => {
+                        return new Response(JSON.stringify([]), {
+                            status: 200,
+                            headers: { 'Content-Type': 'application/json' },
+                        });
+                    },
+                }
+            }),
         }
     );
 

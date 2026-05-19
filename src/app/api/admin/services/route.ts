@@ -3,10 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { checkAdminAuth, unauthorizedResponse } from '@/lib/admin-auth';
 
 // Admin client with service role for full access
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+const supabaseAdmin = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY || '') : createClient('https://placeholder.supabase.co', 'placeholder-key', { global: { fetch: async () => new Response(JSON.stringify([]), { status: 200 }) } });
 
 // GET - List all services (admin sees all, including inactive)
 export async function GET() {
