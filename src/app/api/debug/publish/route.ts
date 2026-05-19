@@ -4,8 +4,8 @@ import { checkAdminAuth, unauthorizedResponse } from '@/lib/admin-auth';
 
 // Server-side Supabase client with admin access
 function getSupabaseAdmin() {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-key';
 
     if (!url || !serviceKey) {
         return null;

@@ -261,7 +261,7 @@ export default function ProductsPage() {
                 }
 
                 // Extract title - remove markdown formatting
-                let title = h1Match[1]
+                const title = h1Match[1]
                     .replace(/\*\*/g, '')  // Remove bold
                     .replace(/\*/g, '')    // Remove italic
                     .trim();

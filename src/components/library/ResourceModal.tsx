@@ -119,10 +119,10 @@ export function ResourceModal({ book, onClose, onRead, onDownload }: ResourceMod
 
                     <hr className="border-slate-100 my-8" />
 
-                    {/* What's Inside */}
+                    {/* What&apos;s Inside */}
                     <div className="space-y-6">
                         <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
-                            <CheckCircle size={20} className="text-emerald-500" /> What's Inside
+                            <CheckCircle size={20} className="text-emerald-500" /> What&apos;s Inside
                         </h3>
                         <ul className="space-y-4">
                             <li className="flex items-start gap-3 text-slate-600 text-sm bg-slate-50 p-3 rounded-lg border border-slate-100">

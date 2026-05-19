@@ -9,6 +9,30 @@ interface RichTextEditorProps {
     placeholder?: string;
 }
 
+
+const ToolbarButton = ({
+    icon: Icon,
+    command,
+    value: cmdValue,
+    title,
+    onExecute
+}: {
+    icon: React.ElementType;
+    command: string;
+    value?: string;
+    title: string;
+    onExecute: (command: string, value?: string) => void;
+}) => (
+    <button
+        type="button"
+        onClick={() => onExecute(command, cmdValue)}
+        className="p-2 hover:bg-slate-100 rounded transition-colors"
+        title={title}
+    >
+        <Icon size={18} className="text-slate-600" />
+    </button>
+);
+
 export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
     const editorRef = useRef<HTMLDivElement>(null);
     const isInternalChange = useRef(false);
@@ -130,33 +154,13 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         }
     }, [onChange]);
 
-    const ToolbarButton = ({
-        icon: Icon,
-        command,
-        value: cmdValue,
-        title
-    }: {
-        icon: React.ElementType;
-        command: string;
-        value?: string;
-        title: string;
-    }) => (
-        <button
-            type="button"
-            onClick={() => execCommand(command, cmdValue)}
-            className="p-2 hover:bg-slate-100 rounded transition-colors"
-            title={title}
-        >
-            <Icon size={18} className="text-slate-600" />
-        </button>
-    );
 
     return (
         <div className="border border-slate-200 rounded-lg overflow-hidden">
             {/* Toolbar */}
             <div className="flex items-center gap-1 p-2 bg-slate-50 border-b border-slate-200 flex-wrap">
-                <ToolbarButton icon={Bold} command="bold" title="Bold (Ctrl+B)" />
-                <ToolbarButton icon={Italic} command="italic" title="Italic (Ctrl+I)" />
+                <ToolbarButton icon={Bold} command="bold" title="Bold (Ctrl+B)" onExecute={execCommand} />
+                <ToolbarButton icon={Italic} command="italic" title="Italic (Ctrl+I)" onExecute={execCommand} />
 
                 <div className="w-px h-6 bg-slate-200 mx-1" />
 
@@ -187,8 +191,8 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
                 <div className="w-px h-6 bg-slate-200 mx-1" />
 
-                <ToolbarButton icon={List} command="insertUnorderedList" title="Bullet List" />
-                <ToolbarButton icon={ListOrdered} command="insertOrderedList" title="Numbered List" />
+                <ToolbarButton icon={List} command="insertUnorderedList" title="Bullet List" onExecute={execCommand} />
+                <ToolbarButton icon={ListOrdered} command="insertOrderedList" title="Numbered List" onExecute={execCommand} />
 
                 <div className="w-px h-6 bg-slate-200 mx-1" />
 
@@ -206,8 +210,8 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
                 <div className="flex-1" />
 
-                <ToolbarButton icon={Undo} command="undo" title="Undo" />
-                <ToolbarButton icon={Redo} command="redo" title="Redo" />
+                <ToolbarButton icon={Undo} command="undo" title="Undo" onExecute={execCommand} />
+                <ToolbarButton icon={Redo} command="redo" title="Redo" onExecute={execCommand} />
             </div>
 
             {/* Editor */}

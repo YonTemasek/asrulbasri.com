@@ -310,7 +310,7 @@ export default function ToolsPage() {
                             Why This Exists
                         </h2>
                         <p className="text-xl md:text-2xl font-medium leading-relaxed text-slate-900">
-                            "Setiap template di sini dibina untuk satu tujuan — jadikan kerja harian lebih jelas, lebih laju, dan lebih profesional."
+                            &quot;Setiap template di sini dibina untuk satu tujuan — jadikan kerja harian lebih jelas, lebih laju, dan lebih profesional.&quot;
                         </p>
                     </div>
 

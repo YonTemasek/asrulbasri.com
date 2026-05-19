@@ -204,7 +204,7 @@ export default function ServicesPage() {
                                             <div className="bg-white rounded-xl p-6 max-w-sm mx-4">
                                                 <h3 className="font-bold text-lg mb-2">Delete Service?</h3>
                                                 <p className="text-slate-600 mb-4">
-                                                    Are you sure you want to delete "{service.name}"? This action cannot be undone.
+                                                    Are you sure you want to delete &quot;{service.name}&quot;? This action cannot be undone.
                                                 </p>
                                                 <div className="flex gap-3">
                                                     <button
@@ -232,7 +232,7 @@ export default function ServicesPage() {
 
             {/* Info */}
             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-700">
-                <strong>Tip:</strong> Services marked as "Featured" will show a "POPULAR" badge. Hidden services won't appear on your booking page.
+                <strong>Tip:</strong> Services marked as &quot;Featured&quot; will show a &quot;POPULAR&quot; badge. Hidden services won&apos;t appear on your booking page.
             </div>
         </div>
     );

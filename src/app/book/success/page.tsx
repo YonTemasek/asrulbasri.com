@@ -61,7 +61,7 @@ function SuccessContent() {
                 </h1>
 
                 <p className="text-slate-600 mb-8">
-                    Thank you for your booking. We've sent a confirmation to your email.
+                    Thank you for your booking. We&apos;ve sent a confirmation to your email.
                 </p>
 
                 {/* Booking Details */}
@@ -95,11 +95,11 @@ function SuccessContent() {
 
                 {/* What's Next */}
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 text-left mb-8">
-                    <h3 className="font-bold text-amber-800 mb-2">What's Next?</h3>
+                    <h3 className="font-bold text-amber-800 mb-2">What&apos;s Next?</h3>
                     <ul className="text-sm text-amber-700 space-y-2">
                         <li>• Check your email for confirmation</li>
-                        <li>• You'll receive a Google Meet link before your session</li>
-                        <li>• We'll send you reminders 24h and 1h before</li>
+                        <li>• You&apos;ll receive a Google Meet link before your session</li>
+                        <li>• We&apos;ll send you reminders 24h and 1h before</li>
                     </ul>
                 </div>
 

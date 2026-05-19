@@ -31,10 +31,10 @@ export default function AboutPage() {
                 <div className="md:col-span-7">
                     <div className="prose prose-lg prose-slate mb-12">
                         <p className="text-2xl text-slate-900 leading-relaxed font-medium mb-6">
-                            "Is there a simpler way to do this?"
+                            &quot;Is there a simpler way to do this?&quot;
                         </p>
                         <p className="text-slate-600">
-                            I've always been obsessed with fixing things. My career taught me that success isn't about having the fanciest ideas—it's about getting things done consistently.
+                            I&apos;ve always been obsessed with fixing things. My career taught me that success isn&apos;t about having the fanciest ideas—it&apos;s about getting things done consistently.
                         </p>
                         <p className="text-slate-600">
                             I moved from managing chaotic projects to designing simple systems that prevent the chaos in the first place.
@@ -73,9 +73,9 @@ export default function AboutPage() {
 
                     {/* CTA */}
                     <div className="bg-slate-900 text-white p-10 text-center rounded-2xl">
-                        <h3 className="text-2xl font-bold mb-4">What I'm Doing Now</h3>
+                        <h3 className="text-2xl font-bold mb-4">What I&apos;m Doing Now</h3>
                         <p className="text-slate-300 mb-8 max-w-lg mx-auto">
-                            I'm currently helping people install a better "Operating System" for their life and business.
+                            I&apos;m currently helping people install a better &quot;Operating System&quot; for their life and business.
                         </p>
                         <Link href="/services">
                             <Button className="bg-emerald-500 text-white border-none mx-auto hover:bg-emerald-400">

@@ -139,7 +139,7 @@ export default function DashboardOverview() {
         <div className="animate-fade-in">
             <header className="mb-10">
                 <h1 className="text-3xl font-bold">Overview</h1>
-                <p className="text-slate-600 mt-1">Welcome back! Here's what's happening.</p>
+                <p className="text-slate-600 mt-1">Welcome back! Here&apos;s what&apos;s happening.</p>
             </header>
 
             {/* Stats Grid */}

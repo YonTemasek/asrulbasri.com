@@ -119,7 +119,7 @@ export default function HomePage() {
                 How I <br />Work.
               </h2>
               <p className="text-slate-600 leading-relaxed mb-8 text-lg">
-                I help you close decisions that keep work unfinished. Not by giving you more frameworks, but by removing what's blocking you from moving forward.
+                I help you close decisions that keep work unfinished. Not by giving you more frameworks, but by removing what&apos;s blocking you from moving forward.
               </p>
               <div className="grid gap-4">
                 {[
@@ -211,7 +211,7 @@ export default function HomePage() {
             <SectionLabel text="My Resources" light />
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Tools I Use — Not What I Sell</h2>
             <p className="text-slate-400 mb-2 leading-relaxed text-lg">
-              I don't just talk about tools; I use them every day. Here are the simple templates and guides I use to keep my life and business organized.
+              I don&apos;t just talk about tools; I use them every day. Here are the simple templates and guides I use to keep my life and business organized.
             </p>
             <p className="text-slate-500 text-sm mb-8 italic">
               Tools support decisions. They are not the solution.

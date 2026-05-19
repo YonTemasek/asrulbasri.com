@@ -418,7 +418,7 @@ export default function ServiceForm({ serviceId }: ServiceFormProps) {
                             />
                             <div>
                                 <div className="font-medium">Featured</div>
-                                <div className="text-xs text-slate-400">Show "POPULAR" badge</div>
+                                <div className="text-xs text-slate-400">Show &quot;POPULAR&quot; badge</div>
                             </div>
                         </label>
                     </div>
