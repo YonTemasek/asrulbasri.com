@@ -8,7 +8,16 @@ const isValidUrl = supabaseUrl.startsWith('http://') || supabaseUrl.startsWith('
 
 export const supabase: SupabaseClient = isValidUrl
     ? createClient(supabaseUrl, supabaseAnonKey)
-    : createClient('https://placeholder.supabase.co', 'placeholder-key');
+    : createClient('https://placeholder.supabase.co', 'placeholder-key', {
+        global: {
+            fetch: async (url, options) => {
+                return new Response(JSON.stringify([]), {
+                    status: 200,
+                    headers: { 'Content-Type': 'application/json' },
+                });
+            },
+        },
+    });
 
 // Helper to check if Supabase is properly configured
 export const isSupabaseConfigured = () => isValidUrl && supabaseAnonKey !== '';

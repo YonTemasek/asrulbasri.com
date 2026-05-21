@@ -1,8 +1,8 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://asrulbasri.com'
@@ -62,8 +62,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Dynamic articles from Supabase
     let articlePages: MetadataRoute.Sitemap = []
 
-    // Only attempt to fetch if env vars are present
-    if (supabaseUrl && supabaseKey) {
+    // Only attempt to fetch if env vars are present and valid
+    if (supabaseUrl && supabaseUrl.startsWith('http') && supabaseKey) {
         try {
             const supabase = createClient(supabaseUrl, supabaseKey)
             // Use 'status' instead of 'is_published' which might not exist

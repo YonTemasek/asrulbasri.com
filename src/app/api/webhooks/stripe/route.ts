@@ -3,10 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 import { sendBookingConfirmation, sendAdminNotification } from '@/lib/email';
 
-const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
+const supabaseAdmin = process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_URL.startsWith('http') ? createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY || '') : createClient('https://placeholder.supabase.co', 'placeholder-key', { global: { fetch: async () => new Response(JSON.stringify([]), { status: 200 }) } });
 
 // Lazy initialization
 const getStripe = () => {
