@@ -53,8 +53,8 @@ export default function SettingsPage() {
             } else {
                 throw new Error(data.error);
             }
-        } catch (error: any) {
-            setMessage({ type: 'error', text: `Failed to update settings: ${error.message}` });
+        } catch (error: unknown) {
+            setMessage({ type: 'error', text: `Failed to update settings: ${error instanceof Error ? error.message : "Unknown error"}` });
         } finally {
             setSaving(false);
         }

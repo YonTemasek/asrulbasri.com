@@ -2,7 +2,7 @@ import CryptoJS from 'crypto-js';
 
 // Secret key for HMAC signing (use service role key as base)
 const getSecretKey = () => {
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-key';
     if (!key) throw new Error('SUPABASE_SERVICE_ROLE_KEY not configured');
     return key;
 };

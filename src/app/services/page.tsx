@@ -104,7 +104,7 @@ export default function SystemsPage() {
                     </div>
                     <div className="bg-slate-50 p-8 flex flex-col justify-center items-center text-center rounded-2xl border border-slate-100">
                         <h4 className="font-bold text-xl mb-2">Need help organizing?</h4>
-                        <p className="text-sm text-slate-600 mb-6">Let's chat about your current workflow.</p>
+                        <p className="text-sm text-slate-600 mb-6">Let&apos;s chat about your current workflow.</p>
                         <Link href="/work-with-me">
                             <Button primary>Work With Me</Button>
                         </Link>

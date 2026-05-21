@@ -382,7 +382,7 @@ export default function BookingPage({ params }: { params: Promise<{ serviceId: s
                                 </Button>
 
                                 <p className="text-xs text-slate-400 text-center mt-3">
-                                    You'll be redirected to Stripe for secure payment
+                                    You&apos;ll be redirected to Stripe for secure payment
                                 </p>
                             </div>
                         </div>

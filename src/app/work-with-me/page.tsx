@@ -149,8 +149,8 @@ export default function WorkWithMePage() {
                             </div>
                             <h3 className="text-2xl font-bold text-slate-900 mb-2">Need something custom?</h3>
                             <p className="text-slate-600">
-                                Have a unique project or need a tailored solution? Let's discuss your specific requirements
-                                and I'll provide a custom quote.
+                                Have a unique project or need a tailored solution? Let&apos;s discuss your specific requirements
+                                and I&apos;ll provide a custom quote.
                             </p>
                         </div>
                         <a href="mailto:hello@asrulbasri.com?subject=Custom%20Project%20Inquiry">
@@ -165,7 +165,7 @@ export default function WorkWithMePage() {
                 <div className="mt-8 bg-slate-900 text-white rounded-2xl p-8 md:p-12 text-center">
                     <h2 className="text-2xl md:text-3xl font-bold mb-4">Have questions?</h2>
                     <p className="text-slate-400 mb-6 max-w-lg mx-auto">
-                        Not sure which service is right for you? Send me an email and I'll help you figure it out.
+                        Not sure which service is right for you? Send me an email and I&apos;ll help you figure it out.
                     </p>
                     <a href="mailto:hello@asrulbasri.com">
                         <Button className="bg-emerald-500 text-white border-none hover:bg-emerald-400">

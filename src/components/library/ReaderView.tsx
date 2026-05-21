@@ -136,7 +136,7 @@ export function ReaderView({ book, onBack }: ReaderViewProps) {
                                     <CheckCircle className="text-emerald-600" size={32} />
                                 </div>
                                 <h4 className="text-lg font-bold text-slate-800 mb-2">Check Your Email!</h4>
-                                <p className="text-slate-600 text-sm">We've sent a download link to <strong>{email}</strong></p>
+                                <p className="text-slate-600 text-sm">We&apos;ve sent a download link to <strong>{email}</strong></p>
                                 <p className="text-slate-400 text-xs mt-2">Link expires in 48 hours</p>
                             </div>
                         ) : (
